@@ -1,1 +1,1 @@
-# Flipkart_label_Croping_tool
+# flipkart-label-cropper
