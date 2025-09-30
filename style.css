@@ -4,6 +4,6 @@ body { margin:0; font-family: system-ui, Arial; background:var(--bg); color:var(
 .container { max-width: 720px; margin: 40px auto; background:var(--card); padding:24px; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
 h2 { margin-top:0; }
 label { display:block; margin:12px 0 6px; }
-select, input[type=file] { width:100%; padding:10px; background:#0e1627; color:var(--txt); border:1px solid #1f2b45; border-radius:8px; }
+input[type=file] { width:100%; padding:10px; background:#0e1627; color:var(--txt); border:1px solid #1f2b45; border-radius:8px; }
 button { margin-top:14px; padding:12px 16px; border:0; background:var(--acc); color:#061022; font-weight:700; border-radius:10px; cursor:pointer; }
 #result, #progress { margin-top:12px; font-size:14px; opacity:.95; }
