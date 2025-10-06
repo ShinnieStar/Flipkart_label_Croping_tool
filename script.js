@@ -1,4 +1,4 @@
-/* Shinnie Star — Flipkart Crop (Lite) */
+/* Shinnie Star — Flipkart Crop (Lite) with Dark/Light toggle + Refresh + Back */
 
 const btn = document.getElementById("processBtn");
 const filesInput = document.getElementById("pdfs");
@@ -6,8 +6,21 @@ const resultDiv = document.getElementById("result");
 const progressDiv = document.getElementById("progress");
 const refreshBtn = document.getElementById("refreshBtn");
 const backBtn = document.getElementById("backBtn");
+const themeToggle = document.getElementById("themeToggle");
 
-/* Desktop coordinates ported */
+/* Theme init + toggle */
+(function initTheme() {
+  const saved = localStorage.getItem("theme") || "dark";
+  if (saved === "light") document.documentElement.classList.add("light");
+  themeToggle.textContent = document.documentElement.classList.contains("light") ? "Dark" : "Light";
+})();
+themeToggle.addEventListener("click", () => {
+  const isLight = document.documentElement.classList.toggle("light");
+  localStorage.setItem("theme", isLight ? "light" : "dark");
+  themeToggle.textContent = isLight ? "Dark" : "Light";
+});
+
+/* Crop constants (Flipkart) */
 const FK_LEFT_X   = 185;
 const FK_RIGHT_X  = 410;
 const FK_BOTTOM_Y = 450;
@@ -49,7 +62,6 @@ async function cropAndMerge(files) {
   const rect = getCropRect();
 
   let processed = 0;
-
   for (const f of files) {
     const srcBytes = await readFileAsArrayBuffer(f);
     const src = await PDFDocument.load(srcBytes, { ignoreEncryption: true });
@@ -58,24 +70,14 @@ async function cropAndMerge(files) {
     const pages = await outDoc.copyPages(src, Array.from({ length: pageCount }, (_, i) => i));
     for (let i = 0; i < pages.length; i++) {
       const p = pages[i];
-
-      // Create a new cropped page
       const newPage = outDoc.addPage([rect.width, rect.height]);
       const embedded = await outDoc.embedPage(p);
-
-      newPage.drawPage(embedded, {
-        x: -rect.x,
-        y: -rect.y,
-        width: p.getWidth(),
-        height: p.getHeight(),
-      });
+      newPage.drawPage(embedded, { x: -rect.x, y: -rect.y, width: p.getWidth(), height: p.getHeight() });
     }
     processed++;
     progressDiv.textContent = `Processed ${processed}/${files.length}`;
   }
-
-  const bytes = await outDoc.save();
-  return bytes;
+  return await outDoc.save();
 }
 
 function downloadPdf(bytes, name) {
@@ -90,38 +92,20 @@ function downloadPdf(bytes, name) {
 }
 
 btn.addEventListener("click", async () => {
-  resultDiv.textContent = "";
-  progressDiv.textContent = "";
-
+  resultDiv.textContent = ""; progressDiv.textContent = "";
   const files = Array.from(filesInput.files || []);
-  if (!files.length) {
-    resultDiv.textContent = "Please select at least one PDF.";
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = "Processing…";
+  if (!files.length) { resultDiv.textContent = "Please select at least one PDF."; return; }
+  btn.disabled = true; btn.textContent = "Processing…";
   try {
     await ensurePDFLib();
     const mergedBytes = await cropAndMerge(files);
     const ts = new Date().toISOString().replace(/[:.]/g, "-");
     downloadPdf(mergedBytes, `Shinnie Star Cropped File ${ts}.pdf`);
-    progressDiv.textContent = "Done.";
-    resultDiv.textContent = "Downloaded cropped PDF.";
+    progressDiv.textContent = "Done."; resultDiv.textContent = "Downloaded cropped PDF.";
   } catch (e) {
-    console.error(e);
-    progressDiv.textContent = "";
-    resultDiv.textContent = "Failed: " + (e?.message || e);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Process";
-  }
+    console.error(e); progressDiv.textContent = ""; resultDiv.textContent = "Failed: " + (e?.message || e);
+  } finally { btn.disabled = false; btn.textContent = "Process"; }
 });
 
-refreshBtn.addEventListener("click", () => {
-  window.location.reload();
-});
-
-backBtn.addEventListener("click", () => {
-  window.location.href = "https://www.shinniestar.com";
-});
+refreshBtn.addEventListener("click", () => window.location.reload());
+backBtn.addEventListener("click", () => window.location.href = "https://www.shinniestar.com");
