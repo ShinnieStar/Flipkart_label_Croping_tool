@@ -1,11 +1,13 @@
-/* Lite-only: crop + merge client-side, download single PDF */
+/* Shinnie Star — Flipkart Crop (Lite) */
+
 const btn = document.getElementById("processBtn");
 const filesInput = document.getElementById("pdfs");
 const resultDiv = document.getElementById("result");
 const progressDiv = document.getElementById("progress");
+const refreshBtn = document.getElementById("refreshBtn");
+const backBtn = document.getElementById("backBtn");
 
-/* Desktop coordinates ported:
-   FK_LEFT_X, FK_RIGHT_X, FK_BOTTOM_Y, FK_TOP_Y = 185, 410, 450, 820 */
+/* Desktop coordinates ported */
 const FK_LEFT_X   = 185;
 const FK_RIGHT_X  = 410;
 const FK_BOTTOM_Y = 450;
@@ -16,12 +18,13 @@ async function ensurePDFLib() {
     await new Promise((r) => {
       const s = document.createElement("script");
       s.src = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js";
-      s.onload = r; document.body.appendChild(s);
+      s.onload = r;
+      document.body.appendChild(s);
     });
   }
 }
 
-async function readFileAsArrayBuffer(file) {
+function readFileAsArrayBuffer(file) {
   return new Promise((res, rej) => {
     const r = new FileReader();
     r.onload = () => res(r.result);
@@ -39,26 +42,40 @@ function getCropRect() {
 }
 
 async function cropAndMerge(files) {
-  const { PDFDocument } = PDFLib;
-  const merged = await PDFDocument.create();
+  await ensurePDFLib();
+  const { PDFDocument } = window.PDFLib;
+
+  const outDoc = await PDFDocument.create();
   const rect = getCropRect();
 
   let processed = 0;
+
   for (const f of files) {
     const srcBytes = await readFileAsArrayBuffer(f);
     const src = await PDFDocument.load(srcBytes, { ignoreEncryption: true });
     const pageCount = src.getPageCount();
 
-    for (let i=0; i<pageCount; i++) {
-      const [p] = await merged.copyPages(src, [i]);
-      p.setCropBox(rect.x, rect.y, rect.width, rect.height);
-      p.setMediaBox(rect.x, rect.y, rect.width, rect.height);
-      merged.addPage(p);
+    const pages = await outDoc.copyPages(src, Array.from({ length: pageCount }, (_, i) => i));
+    for (let i = 0; i < pages.length; i++) {
+      const p = pages[i];
+
+      // Create a new cropped page
+      const newPage = outDoc.addPage([rect.width, rect.height]);
+      const embedded = await outDoc.embedPage(p);
+
+      newPage.drawPage(embedded, {
+        x: -rect.x,
+        y: -rect.y,
+        width: p.getWidth(),
+        height: p.getHeight(),
+      });
     }
     processed++;
     progressDiv.textContent = `Processed ${processed}/${files.length}`;
   }
-  return await merged.save();
+
+  const bytes = await outDoc.save();
+  return bytes;
 }
 
 function downloadPdf(bytes, name) {
@@ -66,27 +83,45 @@ function downloadPdf(bytes, name) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url; a.download = name;
-  document.body.appendChild(a); a.click(); a.remove();
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
   URL.revokeObjectURL(url);
 }
 
 btn.addEventListener("click", async () => {
-  const files = filesInput.files;
-  if (!files || files.length === 0) {
+  resultDiv.textContent = "";
+  progressDiv.textContent = "";
+
+  const files = Array.from(filesInput.files || []);
+  if (!files.length) {
     resultDiv.textContent = "Please select at least one PDF.";
     return;
   }
+
+  btn.disabled = true;
+  btn.textContent = "Processing…";
   try {
-    progressDiv.textContent = "Processing...";
     await ensurePDFLib();
-
-    const mergedBytes = await cropAndMerge(Array.from(files));
-    downloadPdf(mergedBytes, "Shinnie Star Croped File.pdf");
-
+    const mergedBytes = await cropAndMerge(files);
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
+    downloadPdf(mergedBytes, `Shinnie Star Cropped File ${ts}.pdf`);
     progressDiv.textContent = "Done.";
-    resultDiv.textContent = "Downloaded: Shinnie Star Croped File.pdf";
+    resultDiv.textContent = "Downloaded cropped PDF.";
   } catch (e) {
+    console.error(e);
     progressDiv.textContent = "";
-    resultDiv.textContent = "Failed: " + e.message;
+    resultDiv.textContent = "Failed: " + (e?.message || e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Process";
   }
+});
+
+refreshBtn.addEventListener("click", () => {
+  window.location.reload();
+});
+
+backBtn.addEventListener("click", () => {
+  window.location.href = "https://www.shinniestar.com";
 });
