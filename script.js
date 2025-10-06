@@ -1,26 +1,36 @@
-/* Shinnie Star — Flipkart Crop (Lite) with Dark/Light toggle + Refresh + Back */
+/* Shinnie Star — Flipkart Crop (Lite) with working Dark/Light toggle + Refresh + Back */
 
 const btn = document.getElementById("processBtn");
 const filesInput = document.getElementById("pdfs");
 const resultDiv = document.getElementById("result");
 const progressDiv = document.getElementById("progress");
-const refreshBtn = document.getElementById("refreshBtn");
-const backBtn = document.getElementById("backBtn");
-const themeToggle = document.getElementById("themeToggle");
 
-/* Theme init + toggle */
-(function initTheme() {
+/* Ensure DOM listeners after load */
+document.addEventListener("DOMContentLoaded", () => {
+  const themeToggle = document.getElementById("themeToggle");
+  const refreshBtn = document.getElementById("refreshBtn");
+  const backBtn = document.getElementById("backBtn");
+
+  // Theme init
   const saved = localStorage.getItem("theme") || "dark";
   if (saved === "light") document.documentElement.classList.add("light");
-  themeToggle.textContent = document.documentElement.classList.contains("light") ? "Dark" : "Light";
-})();
-themeToggle.addEventListener("click", () => {
-  const isLight = document.documentElement.classList.toggle("light");
-  localStorage.setItem("theme", isLight ? "light" : "dark");
-  themeToggle.textContent = isLight ? "Dark" : "Light";
+  if (themeToggle) themeToggle.textContent = document.documentElement.classList.contains("light") ? "Dark" : "Light";
+
+  // Theme click
+  themeToggle?.addEventListener("click", () => {
+    const isLight = document.documentElement.classList.toggle("light");
+    localStorage.setItem("theme", isLight ? "light" : "dark");
+    if (themeToggle) themeToggle.textContent = isLight ? "Dark" : "Light";
+  });
+
+  // Refresh
+  refreshBtn?.addEventListener("click", () => window.location.reload());
+
+  // Back to site
+  backBtn?.addEventListener("click", () => { window.location.href = "https://www.shinniestar.com"; });
 });
 
-/* Crop constants (Flipkart) */
+/* Flipkart crop coordinates */
 const FK_LEFT_X   = 185;
 const FK_RIGHT_X  = 410;
 const FK_BOTTOM_Y = 450;
@@ -106,6 +116,3 @@ btn.addEventListener("click", async () => {
     console.error(e); progressDiv.textContent = ""; resultDiv.textContent = "Failed: " + (e?.message || e);
   } finally { btn.disabled = false; btn.textContent = "Process"; }
 });
-
-refreshBtn.addEventListener("click", () => window.location.reload());
-backBtn.addEventListener("click", () => window.location.href = "https://www.shinniestar.com");
