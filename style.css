@@ -22,6 +22,7 @@ body {
   background:var(--bg); color:var(--txt);
   transition: background .3s, color .3s;
 }
+
 .topbar {
   display:flex; align-items:center; justify-content:space-between;
   padding:10px 14px; background:var(--card);
@@ -44,11 +45,12 @@ body {
   font-weight:700; cursor:pointer;
 }
 .container {
-  max-width: 720px; margin: 32px auto 38px;
+  max-width: 720px; margin: 32px auto 30px;
   background:var(--card); padding:30px 22px 28px 22px;
-  border-radius:14px; box-shadow: 0 8px 32px rgba(0,0,0,.13);
+  border-radius:15px; box-shadow: 0 8px 32px rgba(0,0,0,.13);
   border:1.4px solid var(--border);
 }
+
 h2 { margin-top:0; color:var(--acc); font-weight:700; }
 label { display:block; margin:12px 0 6px; color:var(--muted);}
 input[type=file] { width:100%; padding:10px; background:var(--ghost); color:var(--txt); border:1px solid var(--border); border-radius:8px;}
@@ -57,22 +59,29 @@ button { margin-top:14px; padding:12px 16px; border:0; background:var(--acc); co
 #result, #progress { margin-top:12px; font-size:15px; opacity:.95;}
 
 #infosection {
-  max-width:900px; margin:38px auto 0 auto;    /* fuller width and margin */
-  background:none; border-radius:0; padding:0 24px; box-shadow:none; border:none;
+  max-width: 900px;
+  margin: 14px auto 44px;
+  padding: 0 24px;
+  background: none !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
 }
+
 .meta-block {
   background: #4ea3ff;
   color: #fff;
   font-weight: 600;
-  border-radius: 9px;
-  padding: 17px 20px 10px 24px;
-  font-size: 1.08em;
+  border-radius: 13px;
+  padding: 22px 25px 15px 25px;
+  font-size: 1.13em;
   margin-bottom: 22px;
 }
+
 .description-block {
-  font-size: 1.14em;
+  font-size: 1.13em;
   color: var(--txt);
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   background: none;
   border-radius: 0;
   padding: 0;
@@ -80,10 +89,12 @@ button { margin-top:14px; padding:12px 16px; border:0; background:var(--acc); co
 }
 ul { font-size:1.08em; color:var(--txt);}
 .key-features li { margin-bottom:6px;}
-h3  { font-size:1.17em; font-weight:700; margin-bottom:12px; color:var(--acc); margin-top:32px;}
+h3  { font-size:1.16em; font-weight:700; margin-bottom:9px; color:#4ea3ff; margin-top:32px;}
 /* Light Theme Fix */
 body.light, :root.light, .light body { background:var(--bg)!important; color:var(--txt)!important;}
 :root.light, .light { --bg:#f6f8fc; --card:#fff; --txt:#0b1220; --acc:#2563eb; --ghost:#eef2ff; --border:#e5e7eb; --muted:#334155;}
 .light .topbar { background:var(--card)!important; color:var(--txt)!important;}
-.light #infosection, .light h2, .light h3, .light ul, .light label, .light .description-block { color:var(--txt)!important; background:none!important;}
+.light #infosection, .light h2, .light h3, .light ul, .light label, .light .description-block, .light p {
+  color:var(--txt)!important; background:none!important;
+}
 .light .meta-block { background:var(--acc)!important; color:#fff!important;}
