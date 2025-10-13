@@ -1,11 +1,10 @@
-/* Shinnie Star — Flipkart Crop (Lite) with working Dark/Light toggle + Refresh + Back */
+/* Shinnie Star — Flipkart Crop (Lite) with working Dark/Light toggle + Refresh + Back + Progress % */
 
 const btn = document.getElementById("processBtn");
 const filesInput = document.getElementById("pdfs");
 const resultDiv = document.getElementById("result");
 const progressDiv = document.getElementById("progress");
 
-/* Ensure DOM listeners after load */
 document.addEventListener("DOMContentLoaded", () => {
   const themeToggle = document.getElementById("themeToggle");
   const refreshBtn = document.getElementById("refreshBtn");
@@ -72,7 +71,8 @@ async function cropAndMerge(files) {
   const rect = getCropRect();
 
   let processed = 0;
-  for (const f of files) {
+  for (let idx = 0; idx < files.length; idx++) {
+    const f = files[idx];
     const srcBytes = await readFileAsArrayBuffer(f);
     const src = await PDFDocument.load(srcBytes, { ignoreEncryption: true });
     const pageCount = src.getPageCount();
@@ -85,7 +85,8 @@ async function cropAndMerge(files) {
       newPage.drawPage(embedded, { x: -rect.x, y: -rect.y, width: p.getWidth(), height: p.getHeight() });
     }
     processed++;
-    progressDiv.textContent = `Processed ${processed}/${files.length}`;
+    // Show progress in percentage
+    progressDiv.textContent = `Processing: ${Math.round((processed / files.length) * 100)}% (${processed}/${files.length})`;
   }
   return await outDoc.save();
 }
