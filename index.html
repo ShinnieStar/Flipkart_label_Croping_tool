@@ -9,14 +9,13 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body style="background:#151824; color:#fff;">
-
   <div class="topbar" style="display:flex; align-items:center; padding:14px 32px; background:#191d2b;">
     <img src="https://raw.githubusercontent.com/ShinnieStar/Flipkart_label_Croping_tool/main/Logo.png" alt="Shinnie Star Logo" style="height:38px; margin-right:15px;">
     <div class="brand" style="font-size:1.32em; font-weight:bold; flex:1;">Shinnie Star</div>
     <button id="themeToggle" class="ghost-btn" aria-label="Toggle theme" style="margin-right:13px;">Light mode</button>
     <button id="backBtn" style="background:#38c45d; color:#fff; border:none; padding:8px 17px; border-radius:5px; cursor:pointer;">Back to site</button>
   </div>
-  
+
   <div style="max-width:620px; margin:40px auto 0 auto; background:#1c202c; padding:28px 24px 24px 24px; border-radius:16px; box-shadow:0 2px 16px rgba(0,0,0,0.13);">
     <h2 style="font-size:1.7em; font-weight:bold; color:#38c45d; margin-bottom:20px;">Free Online Flipkart Label Cropper Tool by Shinnie Star</h2>
 
@@ -31,10 +30,14 @@
     <div id="result"></div>
     <div id="progress" style="font-size:1.1em; color:#18a4dd; margin-top:11px;"></div>
   </div>
-  
-  <!-- Description & About Section OUTSIDE tool area -->
-  <div style="max-width:670px; margin:36px auto 0 auto; padding:0 24px;">
-    <h3 style="font-size:1.3em; font-weight:bold; color:#38c45d; margin-top:24px;">Key Features:</h3>
+
+  <div id="infosection" style="max-width:670px; margin:36px auto 0 auto; padding:0 24px;">
+    <!-- Description just before Key Features -->
+    <div style="font-size:1.15em; color:#fff; margin-bottom:26px; margin-top:8px;">
+      Welcome to Shinnie Star’s Free Flipkart Label Cropper Tool — your fastest and most secure way to crop multiple Flipkart shipping labels from PDFs in bulk. Absolutely free, this tool ensures your privacy, requires no registration, and handles unlimited labels instantly with one click. Crop, download, and print all your Flipkart shipping labels with ease — perfect for every seller!
+    </div>
+
+    <h3 style="font-size:1.3em; font-weight:bold; color:#38c45d; margin-top:0;">Key Features:</h3>
     <ul style="font-size:1.08em; color:#d8d8d8;">
       <li>✅ Instantly crop unlimited Flipkart shipping labels from PDFs</li>
       <li>⚡ Superfast, secure browser-side processing — your data never leaves your device</li>
@@ -53,23 +56,11 @@
     <p style="font-size:1.08em; color:#d8d8d8;">
       Our Flipkart Label Cropper is free, private, reliable, and built for sellers facing everyday order management needs. If you need instant label cropping, bulk downloads, or efficient PDF utilities for Flipkart, Shinnie Star is the solution that saves time and boosts productivity.
     </p>
-
     <p style="font-weight:bold; margin-top:28px; color:#38c45d; font-size:1.13em;">
       Try Flipkart Label Cropper today and experience the Shinnie Star difference!
     </p>
   </div>
 
   <script src="./script.js"></script>
-  <!-- Example JS function to show processing percentage in #progress -->
-  <script>
-    // Add this in your actual cropping/processing JS loop:
-    // Example: updateProgress(current, total);
-    function updateProgress(done, total) {
-      const percent = total > 0 ? Math.round((done / total) * 100) : 0;
-      document.getElementById("progress").textContent =
-        `Processing: ${percent}% (${done} of ${total})`;
-    }
-    // Call updateProgress as your actual crop/process runs
-  </script>
 </body>
 </html>
